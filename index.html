@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ChatApp - Clone WhatsApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100 h-screen">
+    <!-- Page de connexion -->
+    <div id="loginPage" class="flex items-center justify-center h-full">
+      <div class="bg-white p-8 rounded-lg shadow-lg w-96">
+        <div class="text-center mb-6">
+          <i class="fas fa-comments text-green-500 text-4xl mb-4"></i>
+          <h1 class="text-2xl font-bold text-gray-800">ChatApp</h1>
+          <p class="text-gray-600">Connectez-vous pour commencer</p>
+        </div>
+        <form id="loginForm">
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Nom complet
+            </label>
+            <input
+              type="text"
+              id="userName"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Numéro de téléphone
+            </label>
+            <input
+              type="tel"
+              id="userPhone"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+              placeholder="+33 6 12 34 56 78"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition duration-200"
+          >
+            Se connecter
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Interface principale -->
+    <div id="mainApp" class="hidden h-full flex">
+      <!-- Sidebar -->
+      <div class="w-1/3 bg-white border-r border-gray-300 flex flex-col">
+        <!-- Header -->
+        <div
+          class="bg-gray-50 p-4 border-b border-gray-300 flex justify-between items-center"
+        >
+          <div class="flex items-center">
+            <div
+              class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold"
+            >
+              <span id="userInitial"></span>
+            </div>
+            <span id="currentUserName" class="ml-3 font-semibold"></span>
+          </div>
+          <div class="flex space-x-2">
+            <button
+              id="addContactBtn"
+              class="p-2 hover:bg-gray-200 rounded-full"
+            >
+              <i class="fas fa-user-plus text-gray-600"></i>
+            </button>
+            <button id="logoutBtn" class="p-2 hover:bg-gray-200 rounded-full">
+              <i class="fas fa-sign-out-alt text-gray-600"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Liste des contacts -->
+        <div class="flex-1 overflow-y-auto">
+          <div id="contactsList" class="divide-y divide-gray-200">
+            <!-- Les contacts seront ajoutés ici dynamiquement -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Zone de chat -->
+      <div class="flex-1 flex flex-col">
+        <!-- Header du chat -->
+        <div
+          id="chatHeader"
+          class="bg-gray-50 p-4 border-b border-gray-300 hidden"
+        >
+          <div class="flex items-center">
+            <div
+              class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold"
+            >
+              <span id="contactInitial"></span>
+            </div>
+            <div class="ml-3">
+              <div id="contactName" class="font-semibold"></div>
+              <div id="contactPhone" class="text-sm text-gray-500"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div
+          id="messagesContainer"
+          class="flex-1 overflow-y-auto p-4 bg-gray-50"
+        >
+          <div
+            id="noContactSelected"
+            class="flex items-center justify-center h-full text-gray-500"
+          >
+            <div class="text-center">
+              <i class="fas fa-comments text-6xl mb-4"></i>
+              <p class="text-xl">
+                Sélectionnez un contact pour commencer une conversation
+              </p>
+            </div>
+          </div>
+          <div id="messagesList" class="hidden space-y-2">
+            <!-- Les messages seront ajoutés ici -->
+          </div>
+        </div>
+
+        <!-- Zone de saisie -->
+        <div
+          id="messageInput"
+          class="bg-white p-4 border-t border-gray-300 hidden"
+        >
+          <form id="messageForm" class="flex space-x-2">
+            <input
+              type="text"
+              id="messageText"
+              required
+              class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:border-green-500"
+              placeholder="Tapez votre message..."
+            />
+            <button
+              type="submit"
+              class="bg-green-500 text-white p-2 rounded-full hover:bg-green-600 transition duration-200"
+            >
+              <i class="fas fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal d'ajout de contact -->
+    <div
+      id="addContactModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white p-6 rounded-lg w-96">
+        <h2 class="text-xl font-bold mb-4">Ajouter un contact</h2>
+        <form id="addContactForm">
+          <div class="mb-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Nom du contact
+            </label>
+            <input
+              type="text"
+              id="contactNameInput"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+            />
+          </div>
+          <div class="mb-6">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Numéro de téléphone
+            </label>
+            <input
+              type="tel"
+              id="contactPhoneInput"
+              required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500"
+            />
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button
+              type="button"
+              id="cancelAddContact"
+              class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+            >
+              Ajouter
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/contacts.js"></script>
+    <script src="js/messages.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
